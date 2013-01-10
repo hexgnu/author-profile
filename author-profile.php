@@ -102,9 +102,17 @@ class AuthorSpotlight_Widget extends WP_Widget {
 	private function _displayAuthor($args, $instance){
 		global $authordata;
 		extract( $args ); // extract arguments
-		$isHome = is_home() || is_front_page(); //Don't show the Widget on home page
+		$isHome = is_front_page(); //Don't show the Widget on home page
+    
+    
 
-		if(!$isHome && (is_single() || is_page()) && $authordata->ID){			
+    if(have_posts()) {
+      $authordata->ID = 2;
+    }
+    
+		
+		
+		if(!$isHome && (is_singular() || have_posts()) && $authordata->ID){		
 			if($instance['seq'] == 1){
 				echo $before_widget;
 				echo $before_title . $instance['title'] . $after_title;
@@ -112,7 +120,7 @@ class AuthorSpotlight_Widget extends WP_Widget {
 			echo '<div id="author-spotlight">';			
 			echo '<div id="author-profile">';
 			// Display author's name
-			echo '<h2>'.get_the_author_firstname().' '.get_the_author_lastname().'</h2>';
+			echo '<h2>About ' . get_the_author_firstname() . ' '.get_the_author_lastname().'</h2>';
 			
 			//Display the social icons?
 			$socialDiv = "";			
@@ -159,7 +167,7 @@ class AuthorSpotlight_Widget extends WP_Widget {
 			
 			//Display User photo OR the Gravatar
 			if(function_exists('userphoto_exists') && userphoto_exists($authordata)){
-				userphoto_thumbnail($authordata);
+				userphoto($authordata);
 			}
 			else {
 				echo get_avatar($authordata->ID, 96);	
